@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    container_name: "glam_webapp"
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=glam
+      - DB_USERNAME=glam_user
+      - DB_PASSWORD=password
+    depends_on:
+      - db
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=glam_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=glam
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

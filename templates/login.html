@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Gian</title>
+        <link href="{{ url_for('static', path='style.css') }}" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="login">
+            <div class="form">
+              <form class="login-form" method="post">
+                <span class="material-icons">admin</span>
+                <input type="text" name="username" placeholder="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"/>
+                <input type="password" name="password" placeholder="password" required />
+                <button type="submit">login</button>
+              </form>
+            </div>
+        </div>
+    </body>
+
+</html>

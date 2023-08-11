@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ model_view.pk_column.name }}: {{ model_view.get_attr_value(model,
+                model_view.pk_column) }}</h3>
+        </div>
+        <div class="card-body border-bottom py-3">
+            <div class="table-responsive">
+                <table class="table card-table table-vcenter text-nowrap table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="w-50">Column</th>
+                            <th class="w-50">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name, attr in model_view._details_attrs %}
+                        <tr>
+                            <td>{{ name }}</td>
+                            {% set value, formatted_value = model_view.get_detail_value(model, attr) %}
+                            {% if attr in model_view._relations %}
+                            {% if is_list( value ) %}
+                            <td>
+                                {% for elem, formatted_elem in zip(value, formatted_value) %}
+                                <a href="{{ model_view._url_for_details(elem) }}">({{ formatted_elem }})</a>
+                                {% endfor %}
+                            </td>
+                            {% else %}
+                            <td><a href="{{ model_view._url_for_details_with_attr(model, attr) }}">{{ formatted_value
+                                    }}</a></td>
+                            {% endif %}
+                            {% else %}
+                            <td>{{ formatted_value }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="accordion" class="mt-2 mb-2">
+                {% for item in inline_views %}
+                <div class="card">
+                    <div class="card-header p-0" id="heading-{{ item.model.identity }}"
+                        style="background-color: var(--tblr-gray-300);">
+                        <a class="btn btn-link" data-toggle="collapse" data-target="#collapse-{{ item.model.identity }}"
+                            aria-expanded="false" aria-controls="collapse-{{ item.model.identity }}">
+                            <h3 class="mb-0">
+                                {{ item.model.name }}
+                            </h3>
+                        </a>
+                    </div>
+                    <div id="collapse-{{ item.model.identity }}" class="collapse show"
+                        aria-labelledby="heading-{{ item.model.identity }}" data-parent="#accordion">
+                        <div class="card-body">
+                            {% for obj in item.objects %}
+                            <div class="p-1">
+                                <div class="p-2" style="background-color: var(--tblr-border-color-light);">
+                                    <a href="{{ model_view._url_for_details(obj) }}">
+                                        {{ obj }}
+                                    </a>
+                                </div>
+                                <table class="table card-table table-vcenter text-nowrap table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="w-50">Column</th>
+                                            <th class="w-50">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for name in item.fields %}
+                                        <tr>
+                                            <td>{{ name }}</td>
+                                            <td> {{ obj[name] }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="card-footer d-flex align-items-right">
+                <div class="row">
+                    <div class="col">
+                        <a href="{{ url_for('admin:list', identity=model_view.identity) }}" class="btn">
+                            Go Back
+                        </a>
+                    </div>
+                    {% if model_view.can_delete %}
+                    <div class="col">
+                        <a href="#" data-name="{{ model_view.name }}"
+                            data-pk="{{ model_view.get_attr_value(model, model_view.pk_column) }}"
+                            data-url="{{ model_view._url_for_delete(model) }}" data-bs-toggle="modal"
+                            data-bs-target="#modal-delete" class="btn btn-danger">
+                            Delete
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% if model_view.can_edit %}
+                    <div class="col">
+                        <a href="{{ model_view._url_for_edit(model) }}" class="btn btn-primary">
+                            Edit
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% if model_view.can_delete %}
+{% include 'modals/delete.html' %}
+{% endif %}
+{% endblock %}
