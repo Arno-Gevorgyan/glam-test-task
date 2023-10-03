@@ -62,7 +62,7 @@ sqlalchemy-utils==0.41.0
 starlette==0.21.0
 strawberry-graphql==0.171.1
 toml==0.10.2
-urllib3==1.26.15
+urllib3==1.26.17
 uvicorn==0.21.1
 uvloop==0.17.0
 watchgod==0.8.2
